@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My field from space · 3D demo</title>
+<link rel="stylesheet" href="style.css"></head><body>
+<div id="app">
+<div id="scene"><div id="world">
+<canvas id="terrain" width="1400" height="1400"></canvas>
+<svg id="field" viewBox="0 0 900 900" width="900" height="900">
+<defs>
+<clipPath id="fc"><polygon points="468,124 124,432 432,776 776,468"/></clipPath>
+<linearGradient id="gN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#46a62e"/><stop offset="1" stop-color="#1f7a24"/></linearGradient>
+<linearGradient id="gH" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f8cc4"/><stop offset="1" stop-color="#17527f"/></linearGradient>
+<linearGradient id="gT" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e09a35"/><stop offset="1" stop-color="#b23d1f"/></linearGradient>
+<linearGradient id="gP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a7c4a"/><stop offset="1" stop-color="#72593a"/></linearGradient>
+<clipPath id="rc"><rect id="rr" x="900" y="0" width="0" height="900"/></clipPath><linearGradient id="sb"><stop offset="0" stop-color="#d6ff6a" stop-opacity="0"/><stop offset="1" stop-color="#fff176" stop-opacity=".9"/></linearGradient><pattern id="gr" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M0 0H20V20" fill="none" stroke="#fff" stroke-width="1.4" stroke-opacity=".7"/></pattern><linearGradient id="bmg"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/></linearGradient><mask id="bm"><rect x="-80" y="100" width="80" height="700" fill="url(#bmg)"/></mask>
+<pattern id="st" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(-8)"><rect width="9" height="3" fill="#00000020"/></pattern>
+</defs>
+<polygon id="fp" clip-path="url(#rc)" points="468,124 124,432 432,776 776,468" fill="url(#gN)"/>
+<g clip-path="url(#fc)">
+<g clip-path="url(#rc)"><g id="deco"></g><polygon points="110,110 800,110 800,790 110,790" fill="url(#st)"/></g>
+<g id="zones"></g>
+<g id="cont"><path d="M250 350C330 320 380 400 450 360S560 320 670 350"/><path d="M250 450C330 430 400 510 480 460S610 440 730 480"/><path d="M280 590C370 570 440 630 520 590S650 570 730 590"/></g>
+<g id="band"><rect x="-80" y="100" width="80" height="700" fill="url(#sb)"/><rect x="-80" y="100" width="80" height="700" fill="url(#gr)" mask="url(#bm)"/></g>
+</g>
+<polygon points="468,124 124,432 432,776 776,468" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+</svg>
+<div id="bld"></div>
+<div id="beam"></div>
+<div id="sat"><canvas id="satc" width="280" height="280"></canvas></div>
+</div></div>
+
+<nav class="ui tabs glass" id="tabs"></nav>
+<div class="ui pills">
+<div class="pill" id="clock"><span id="clk"></span></div>
+<label class="pill"><select id="crop" aria-label="Current crop"><option value="tomate">Crop: Tomato</option><option value="lechuga">Crop: Lettuce</option><option value="zapallo">Crop: Squash</option><option value="frutilla">Crop: Strawberry</option><option value="naranja">Crop: Orange</option><option value="melon">Crop: Melon</option><option value="sandia">Crop: Watermelon</option><option value="ciruela">Crop: Plum</option></select></label>
+</div>
+<div class="ui ctrl">
+<button class="zm" id="zi" data-tip="Zoom in" aria-label="Zoom in">+</button><button class="zm" id="zo" data-tip="Zoom out" aria-label="Zoom out">−</button>
+<button id="loc" data-tip="View back" aria-label="View front or back"><svg class="ifr" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11L12 3l9 8v10H3z"/><rect x="9.5" y="13" width="5" height="8" fill="currentColor"/></svg><svg class="ibk" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11L12 3l9 8v10H3z"/><rect x="6.5" y="12.5" width="4" height="4"/><rect x="13.5" y="12.5" width="4" height="4"/></svg></button>
+<button id="cmpb" data-tip="North up" aria-label="North up"><span id="cmp">▲</span></button>
+<button class="m2" id="m2" data-tip="2D view">2D</button>
+</div>
+
+<section class="ui left" id="left">
+<div class="glass card" id="c1"><div id="c1b"></div></div>
+<div class="glass card" id="c2">
+<div id="wat"><div class="nw"><svg viewBox="0 0 64 64" width="56" height="56"><path d="M10 26h30a4 4 0 0 1 4 4v18a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6z" fill="#3b8cf0"/><path d="M44 34l14-14" stroke="#3b8cf0" stroke-width="5" stroke-linecap="round"/><path d="M16 26c0-8 6-12 12-12s12 4 12 12" fill="none" stroke="#3b8cf0" stroke-width="4"/></svg>
+<div><small id="wl"></small><div class="big" id="wm"></div><div style="color:var(--mut)" id="ws"></div></div></div>
+<div id="wn"></div><div class="wk" id="wk"></div></div>
+<div id="ndw" hidden><div class="hh"><div class="lab" style="color:var(--amb)">MOVE THE NDVI AND SEE HOW THE PLOT CHANGES</div><span class="inf" tabindex="0" role="button" aria-label="Clarification about this slider">!<span class="tt">This slider is only for the demo simulation: it lets you see how the plot changes with different NDVI values. In the final version it will not be interactive: it will be a reference for the NDVI measured by the satellite.</span></span></div><input type="range" id="nd" min="0" max="1" step="0.01" value="0.85" style="width:100%;margin-top:8px"><div class="sc"></div><div class="sl"><span>0 wilted</span><span>0.5</span><span>1 fully green</span></div></div>
+<div id="hmw" hidden><div class="hh"><div class="lab" style="color:var(--amb)">CHANGE THE SOIL MOISTURE (SIMULATION)</div><span class="inf" tabindex="0" role="button" aria-label="Clarification about this slider">!<span class="tt">This slider is only for the demo simulation: it lets you change the soil moisture to see how the color of the zones and the irrigation plan change. In the final version it will not be movable: it will show the moisture measured by the satellite.</span></span></div><input type="range" id="hm" min="0" max="100" step="1" value="41" style="width:100%;margin-top:8px"><div class="sc sh"></div><div class="sl"><span>0% dry</span><span>50%</span><span>100% saturated</span></div></div>
+<div id="tip" hidden><div class="lab" id="tipl" style="color:var(--amb)">WHAT TO LOOK FOR IN THE FIELD</div><div style="margin-top:6px;font-size:15px" id="tipt"></div></div>
+</div>
+</section>
+
+<div class="ui ba"><div style="font-size:22px">🛰️</div>
+<div><small id="bal">LATEST CLEAR IMAGE</small><b id="bat">Compare it with 23 years ago.</b></div>
+<div class="seg" id="seg"><button data-p="1">Before</button><button data-p="0" class="on">Current</button></div></div>
+<div class="demo">Demo with simulated data</div>
+<div class="hint">Drag to rotate · Scroll or pinch to zoom</div>
+</div>
+
+<script src="sat.js"></script>
+<script src="app.js"></script>
+</body></html>

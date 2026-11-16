@@ -1,0 +1,10 @@
+﻿cultivo_id,cultivo,especie_botanica,estado_identificacion,familia_botanica,tipo_cultivo,duracion_general,observaciones
+olericultura,Olericultura,,NO_APLICA,grupo_productivo,No es una especie; es la actividad/grupo de hortalizas.,NO_APLICA,No usar como cultivo individual para rotación.
+tomate,Tomate,Solanum lycopersicum,CONFIRMADA,Solanaceae,hortaliza_fruto,anual,Familia confirmada para tomate.
+naranja,Naranja / cítricos,Citrus sinensis,A CONFIRMAR A NIVEL VARIEDAD,Rutaceae,frutal_arboreo,perenne,Árboles establecidos: no tratar como cultivo anual rotativo.
+ciruelo,Ciruelo / ciruela tropical,,PENDIENTE_IDENTIFICACION,,frutal_arboreo,perenne_probable,Confirmar especie; no asignar familia hasta identificar el árbol.
+frutilla,Frutilla,Fragaria × ananassa,ORIENTATIVA,Rosaceae,frutal_herbaceo,ciclo_variable,Duración y renovación dependen del sistema productivo.
+lechuga,Lechuga,Lactuca sativa,CONFIRMADA,Asteraceae,hortaliza_hoja,anual,Puede haber varios ciclos dentro del año.
+melon,Melón,Cucumis melo,CONFIRMADA,Cucurbitaceae,hortaliza_fruto,anual,
+sandia,Sandía,Citrullus lanatus,CONFIRMADA,Cucurbitaceae,hortaliza_fruto,anual,
+zapallo,Zapallo / zapallo coreano,Cucurbita spp.,CONFIRMAR_ESPECIE,Cucurbitaceae,hortaliza_fruto,anual,Confirmar especie o variedad para mayor precisión.

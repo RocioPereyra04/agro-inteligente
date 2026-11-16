@@ -1,0 +1,8 @@
+cultivo,enero,febrero,marzo,abril,mayo,junio,julio,agosto,septiembre,octubre,noviembre,diciembre
+Lechuga,cosecha,siembra_directa,siembra_directa,siembra_directa,cosecha,cosecha,cosecha,siembra_directa,siembra_directa,cosecha,cosecha,cosecha
+Melón,cosecha,cosecha,cosecha,,,,,,,siembra_directa,siembra_directa,cultivo
+Sandía,cosecha,cosecha,cosecha,,,,,,,,siembra_directa,cultivo
+Zapallo coreano*,cultivo,cultivo,cosecha,cosecha,,,,,,siembra_directa,siembra_directa,cultivo
+Naranja / cítricos,,,,,cosecha,,,,,,cosecha,
+Frutilla,,,,cosecha,,,,,,cosecha,,
+Ciruelo (según catálogo: Spondias purpurea),,,,,,,,cosecha,cosecha,cosecha,cosecha,

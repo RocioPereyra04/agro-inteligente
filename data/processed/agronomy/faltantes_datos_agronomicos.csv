@@ -1,0 +1,14 @@
+﻿dato_requerido,estado_actual,por_que_importa,fuente_recomendada,prioridad
+superficie_ha_por_parcela_y_sector,PARCIAL,"Ajustar magnitudes, costos y cantidad de insumos.",Medición SIG o relevamiento del establecimiento.,ALTA
+unidades_de_manejo_y_poligonos,PENDIENTE,Evitar mezclar señales satelitales de hortalizas y frutales distintos.,Delimitación con productor/recorrida GPS.,ALTA
+historial_por_sector_y_campana,PARCIAL,"La rotación se evalúa por secuencia, familia y fechas, no por lista general de cultivos.","Productor, cuaderno de campo, comprobantes y asesor.",ALTA
+identificacion_del_ciruelo,PENDIENTE,La especie determina familia y compatibilidades; no asumir que es Prunus.,Identificación de la especie/variedad a campo.,MEDIA
+textura_del_suelo,DESCONOCIDO,"Condiciona infiltración, retención de agua y aptitud de cultivos.",Análisis de laboratorio y evaluación de campo.,ALTA
+materia_organica_pct,DESCONOCIDO,Necesaria para evaluar estado del suelo y cambios por manejo.,Análisis de laboratorio.,ALTA
+ph_y_conductividad_electrica,DESCONOCIDO,Permite revisar restricciones químicas y salinidad.,"Análisis de suelo y, si corresponde, agua de riego.",ALTA
+profundidad_efectiva_y_drenaje,DESCONOCIDO,"Puede limitar raíces, almacenamiento de agua y cultivos viables.",Calicata/recorrida técnica.,MEDIA
+calidad_y_disponibilidad_de_agua_de_riego,PARCIAL,"Se informó que hay riego, pero faltan caudal, calidad y disponibilidad por campaña.",Medición del sistema y análisis de agua.,ALTA
+fechas_de_siembra_y_cosecha,PENDIENTE,"Necesarias para calendario, duración de ciclos y riesgo de solapamiento.",Registros del productor.,ALTA
+variedad_y_rendimiento_por_campana,PENDIENTE,"Permite comparar desempeño real, no solo índices satelitales.",Registros de semillas y cosechas.,MEDIA
+costos_precios_y_canales_de_venta,PENDIENTE,Sin ellos no se puede estimar margen ni facilidad de comercialización.,"Productor, compradores y fuentes de precios locales.",MEDIA
+plagas_malezas_y_enfermedades_por_sector,PENDIENTE,Permite aplicar restricciones sanitarias y rotación de familias.,Observaciones a campo y asesor técnico.,MEDIA

@@ -1,0 +1,2 @@
+﻿parcela_id,nombre,superficie_ha,sistema_riego,textura_suelo,materia_organica_pct,ph,conductividad_electrica_ds_m,calidad_agua,drenaje,geometria_geojson,estado_registro,fuente_geometria
+PILOTO_01,Parcela piloto,,SI,DESCONOCIDA,,,,,,"{""type"":""Polygon"",""coordinates"":[[[-65.92953525054749,-32.36413966044574],[-65.928853303228,-32.3649093364855],[-65.92861002882191,-32.36421895878116],[-65.92875716613071,-32.36396344473609],[-65.92953525054749,-32.36413966044574]]]}",PARCIAL,Coordenadas configuradas en el proyecto

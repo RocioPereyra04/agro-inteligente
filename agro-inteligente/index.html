@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AGRO-INTELIGENTE</title>
+<link rel="stylesheet" href="leaflet/leaflet.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#fbf3e4;--brown:#3b2a1a;--terra:#c8581f;--wheat:#e9b44c;--olive:#5b7f2b;--sand:#f2e4c9;--mut:#7a6650}
+*{box-sizing:border-box}
+body{margin:0;font-family:Nunito,system-ui,Arial,sans-serif;background:var(--cream);color:var(--brown);font-size:19px;line-height:1.35}
+header{background:linear-gradient(135deg,#8a3b12,var(--terra) 55%,var(--wheat));color:#fff;padding:14px 16px 12px;box-shadow:0 4px 16px #0003}
+.top{max-width:1100px;margin:auto;display:flex;align-items:center;gap:10px}
+.top b{flex:1;font-size:24px;font-weight:800}
+#steps{max-width:1100px;margin:10px auto 0;display:flex;gap:8px;overflow-x:auto}
+#steps button{flex:1;min-width:52px;border:0;border-radius:14px;padding:8px 4px;background:#ffffff30;color:#fff;font:inherit;font-weight:800;font-size:15px;cursor:pointer}
+#steps button span{display:block;font-size:24px}
+#steps button.now{background:#fff;color:var(--terra)}
+#steps button.done{background:#ffffff66}
+#steps button:disabled{opacity:.45;cursor:default}
+main{max-width:760px;margin:18px auto;padding:0 12px 50px}main.wide{max-width:1100px}
+.card{background:#fff;border-radius:26px;padding:22px;box-shadow:0 8px 28px #3b2a1a22;margin-bottom:16px}
+h1{font-size:30px;margin:0 0 6px;font-weight:800}h2{font-size:22px;margin:0 0 8px}
+p{color:var(--mut);margin:0 0 14px}
+label.l{display:block;font-weight:800;margin:14px 0 6px}
+input[type=text]{width:100%;padding:16px;font:inherit;border:3px solid var(--sand);border-radius:16px;background:#fffdf8}
+input[type=text]:focus{outline:0;border-color:var(--wheat)}
+.b{font:inherit;font-weight:800;border:0;border-radius:18px;min-height:62px;padding:0 22px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s}
+.b:active{transform:scale(.97)}
+.big{background:linear-gradient(135deg,var(--olive),#7ba33a);color:#fff;box-shadow:0 5px 14px #5b7f2b55}
+.alt{background:var(--sand);color:var(--brown)}.warn{background:#fbe0d3;color:#a63d0e}.pri{background:var(--terra);color:#fff}
+.b:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}.row .b{flex:1;min-width:140px}
+.mapwrap{position:relative;border-radius:24px;overflow:hidden;box-shadow:0 8px 28px #3b2a1a33}
+#map{height:68vh;min-height:430px}
+.ov{position:absolute;z-index:1000;display:flex;gap:8px}
+.ov.s{top:12px;left:12px;right:84px;flex-wrap:wrap}
+.ov.s input{flex:1;min-width:150px;box-shadow:0 3px 10px #0004}
+.ov .b{min-height:54px;box-shadow:0 3px 10px #0004;background:#fff;color:var(--brown);padding:0 14px}
+.ov.z{top:12px;right:12px;flex-direction:column}.ov.z .b{width:56px;padding:0;font-size:28px}
+.ov.m{bottom:12px;left:12px;right:12px;flex-wrap:wrap}.ov.m .b{flex:1}
+.ov .b.on{background:var(--terra);color:#fff}
+.dot{width:24px;height:24px;border-radius:50%;background:#fff;border:5px solid var(--terra);box-shadow:0 2px 6px #0007}
+.hint{margin:14px 0;padding:14px 16px;border-radius:18px;background:#fff3cf;font-weight:800}
+.msg{min-height:22px;color:#a63d0e;font-weight:700;margin-bottom:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.st{background:#fff;border-radius:20px;padding:14px 16px;box-shadow:0 4px 14px #3b2a1a1a}
+.st small{color:var(--mut);font-weight:700}.st div{font-size:24px;font-weight:800}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.g3{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.opt{border:4px solid transparent;background:var(--sand);border-radius:22px;padding:16px 10px;text-align:center;font:inherit;font-weight:800;cursor:pointer;color:var(--brown);min-height:120px}
+.opt span{display:block;font-size:46px}.opt small{display:block;font-weight:600;color:var(--mut);font-size:15px;margin-top:2px}
+.opt.on{border-color:var(--olive);background:#e6f0d0}
+.sel{display:flex;align-items:center;gap:14px;margin-top:12px;padding:12px;background:var(--sand);border-radius:20px;flex-wrap:wrap}
+.sel img,.sel .e{width:84px;height:84px;border-radius:16px;object-fit:cover;background:#fff;display:grid;place-items:center;font-size:44px}
+.sel .t{flex:1;min-width:120px;font-weight:800}
+.ph{display:grid;place-items:center;min-height:60px;padding:0 16px;border-radius:16px;background:var(--terra);color:#fff;font-weight:800;cursor:pointer}
+.clima{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.clima div{flex:1;min-width:140px;background:#fff3cf;border-radius:18px;padding:12px;font-weight:800;text-align:center}
+.rec{display:flex;border-radius:26px;overflow:hidden;background:#fff;box-shadow:0 8px 24px #3b2a1a22;margin-bottom:16px}
+.rec .im{width:150px;flex:none;display:grid;place-items:center;font-size:76px}
+.rec .tx{padding:16px;flex:1}.rec h2{display:flex;justify-content:space-between;gap:8px}
+.pct{background:var(--olive);color:#fff;border-radius:99px;padding:2px 12px;font-size:17px;align-self:flex-start}
+.pct.mid{background:var(--wheat);color:var(--brown)}.pct.low{background:#c9b8a0}
+.rec ul{margin:8px 0 12px;padding:0;list-style:none;font-size:16px}.rec li{margin:4px 0}
+.rec .b{min-height:54px;width:100%}
+.res{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.res .b{min-height:46px;font-size:16px}
+.res img{width:100%;max-width:260px;border-radius:14px;margin:6px 6px 0 0}
+@media(max-width:560px){.rec{flex-direction:column}.rec .im{width:100%;height:110px}#steps button{font-size:0}#steps button span{font-size:26px}.g2{grid-template-columns:1fr 1fr}}
+.top{flex-wrap:wrap}.vz{display:flex;gap:6px;width:100%;flex-wrap:wrap}
+.vz button{border:0;border-radius:14px;min-height:46px;padding:0 14px;font:inherit;font-weight:800;background:#fff;color:var(--terra);cursor:pointer;flex:1}
+.fw{display:block;width:100%;height:100%}.fw img{width:100%;height:100%;object-fit:cover;display:block}
+.fw .em{display:grid;place-items:center;width:100%;height:100%}
+.opt .fw{height:96px;border-radius:16px;overflow:hidden;margin-bottom:8px;background:#fff;font-size:46px}
+.rec .im{position:relative;min-height:150px;overflow:hidden}.rec .im .fw{position:absolute;inset:0;font-size:76px}
+[hidden]{display:none!important}
+.pd{display:flex;gap:6px}.pd button{border:2px solid #fff;border-radius:14px;min-height:46px;padding:0 14px;font:inherit;font-weight:800;background:#ffffff30;color:#fff;cursor:pointer}
+.pd #bDemo{background:var(--wheat);border-color:var(--wheat);color:var(--brown)}
+.note{background:#fff3cf;border-radius:20px;padding:14px 16px;margin-bottom:16px;font-size:16px;box-shadow:0 4px 14px #3b2a1a1a}
+.note div{display:grid;gap:6px;margin-top:6px;font-weight:600}
+@media(min-width:700px){.note div{grid-template-columns:1fr 1fr}}
+.modal{position:fixed;inset:0;z-index:4000;background:#000a;display:grid;place-items:center;padding:16px}
+.mb{background:#fff;border-radius:26px;padding:24px;max-width:560px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 12px 40px #0006}
+.mb ul{padding-left:22px;margin:0 0 14px}.mb li{margin:6px 0}
+#demoV{position:fixed;inset:0;z-index:5000;background:#06222b;display:flex;flex-direction:column}
+.dbar{display:flex;align-items:center;gap:12px;padding:8px 12px;padding-top:max(8px,env(safe-area-inset-top));background:var(--brown);color:#fff;font-weight:800}
+#demoV iframe{flex:1;border:0;width:100%}
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><b>🌾 AGRO-INTELIGENTE</b>
+    <div class="pd"><button id="bProto">🧪 Prototype</button><button id="bDemo">🚀 Demo</button></div>
+    <div class="vz"><button id="voz">🔊 Listen</button><button id="pau">⏸ Pause</button><button id="vel">🐢 Slow</button></div></div>
+  <div id="steps"></div>
+</header>
+<main id="main">
+<div class="note"><b>ℹ️ Two ways to explore this project</b>
+<div><span>🧪 <b>Prototype:</b> represents our design proposal and the features we want to develop.</span>
+<span>🚀 <b>Demo:</b> shows how the app would look and work if the project were fully implemented.</span></div></div>
+<div id="app"></div></main>
+<div class="modal" id="mProto" hidden role="dialog" aria-modal="true" aria-labelledby="tProto"><div class="mb">
+<h2 id="tProto">🧪 This is a prototype</h2>
+<p>This version is our <b>initial proposal</b> for the project. It shows the design and the features we want to develop, such as:</p>
+<ul><li>📍 Mark your land on a satellite map (search, GPS and Google Earth import)</li><li>🌍 Describe your soil and your water</li><li>🌿 Register the plants you already grow, with photos</li><li>💡 Get crop suggestions based on climate, season and soil</li><li>✅ Review and edit your information</li></ul>
+<p>It is not the finished app: some parts are simplified and everything may change as the project grows. To see how the final app would look and work, press the <b>Demo</b> button.</p>
+<button class="b big" id="cProto" style="width:100%">Got it</button></div></div>
+<div id="demoV" hidden><div class="dbar"><button class="b alt" id="cDemo" style="min-height:48px">⬅ Back to the prototype</button><span>🚀 Demo · simulated data</span></div><iframe id="demoF" title="Demo" allow="fullscreen"></iframe></div>
+
+<script src="leaflet/leaflet.js"></script>
+<script>
+const KEY='miTerrenoV2',$=id=>document.getElementById(id),app=$('app'),main=$('main');
+const MES=['','January','February','March','April','May','June','July','August','September','October','November','December'];
+const STEPS=[['👤','Details'],['🗺️','Map'],['🌍','Land'],['🌿','My plants'],['💡','Suggestions'],['✅','Summary']];
+const SUELOS=[['arenoso','Sandy','🏜️','Crumbles and drains water fast'],['barroso','Clay','🧱','Sticky when wet, hard when dry'],
+['negro','Black soil','🌑','Loose, dark and fertile'],['pedregoso','Rocky','🪨','Has a lot of stones'],['nose','Not sure','❓','No problem, we can continue']];
+// id,nombre,emoji,color,descripción,Tmin,Tmax,lluvia mm/año,meses de siembra (hemisferio sur),suelos
+const CROPS=[
+['maiz','Corn','🌽','#fde9a8','Cereal used for fresh corn, flour and animal feed.',18,30,500,[9,10,11,12],['negro','barroso']],
+['soja','Soybean','🫘','#e3e9b8','Legume that gives oil and food. It improves the soil.',20,30,450,[10,11,12],['negro','barroso']],
+['trigo','Wheat','🌾','#f7dd9c','Winter cereal used to make flour and bread.',10,22,350,[5,6,7],['negro','barroso']],
+['girasol','Sunflower','🌻','#fbe28a','Gives seeds and oil. It handles drought quite well.',18,28,400,[9,10,11],['negro','arenoso','barroso']],
+['tomate','Tomato','🍅','#fbc8b8','Vegetable that yields a lot in little space. Needs water.',18,28,600,[9,10,11],['negro','arenoso']],
+['papa','Potato','🥔','#ecd6b0','Grows underground, yields a lot and stores well.',12,20,500,[8,9,10],['negro','arenoso']],
+['lechuga','Lettuce','🥬','#d4e8b4','Grows fast and is harvested in a few weeks.',10,20,400,[3,4,5,6,7,8,9],['negro','barroso','arenoso']],
+['zanahoria','Carrot','🥕','#fbd2a6','Sweet root. Likes loose soil.',12,22,450,[3,4,5,8,9],['arenoso','negro']],
+['cebolla','Onion','🧅','#f1dcc8','Keeps for months after harvest.',10,22,400,[3,4,5,6],['negro','barroso']],
+['zapallo','Squash','🎃','#fbd49c','Vining plant with large, long-lasting fruits.',18,30,450,[9,10,11],['negro','arenoso','barroso']],
+['olivo','Olive tree','🫒','#d9e0b5','Tree that lives for many years and needs little water.',15,25,250,[3,4,9],['arenoso','barroso','pedregoso']],
+['uva','Grapevine','🍇','#e4d0ec','Gives grapes to eat or make wine. Thrives in strong sun.',15,26,250,[8,9],['arenoso','pedregoso','negro']],
+['manzana','Apple tree','🍎','#f9cdc6','Fruit tree that needs cool winters.',9,17,600,[8,9],['negro','barroso']],
+['alfalfa','Alfalfa','🌿','#cfe6bf','Forage grass for cattle and horses. Lasts for years.',14,26,500,[3,4,9],['negro','barroso','arenoso']]];
+const C=Object.fromEntries(CROPS.map(c=>[c[0],c]));
+const PL=[...CROPS.map(c=>[c[0],c[1],c[2]]),['otra','Other','✏️']];
+const WK={maiz:'Maize',soja:'Soybean',trigo:'Wheat',girasol:'Common_sunflower',tomate:'Tomato',papa:'Potato',lechuga:'Lettuce',zanahoria:'Carrot',cebolla:'Onion',zapallo:'Pumpkin',olivo:'Olive',uva:'Grape',manzana:'Apple',alfalfa:'Alfalfa',s_arenoso:'Sand',s_barroso:'Clay',s_negro:'Chernozem',s_pedregoso:'Gravel'};
+let FOTO={};try{FOTO=JSON.parse(localStorage.getItem('fotosWiki'))||{}}catch(e){}
+// Foto real: 1) archivo propio en /fotos/ID.jpg  2) foto de Wikipedia  3) ícono
+const foto=(id,em)=>`<span class="fw" data-f="${id}" data-e="${em}"><img src="fotos/${id}.jpg" alt="" onerror="fb(this)"></span>`;
+function fb(i){const w=i.parentNode,id=w.dataset.f;if(!i.dataset.w&&FOTO[id]){i.dataset.w=1;i.src=FOTO[id]}else w.innerHTML=`<b class="em">${w.dataset.e}</b>`}
+function pintarFotos(){document.querySelectorAll('.fw').forEach(w=>{const id=w.dataset.f;if(!w.querySelector('img')&&FOTO[id])w.innerHTML=`<img src="${FOTO[id]}" alt="" data-w="1" onerror="fb(this)">`})}
+async function cargarFotos(){const falta=Object.keys(WK).filter(k=>!FOTO[k]);if(!falta.length)return;
+  await Promise.all(falta.map(async k=>{try{const j=await(await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+WK[k])).json();if(j.thumbnail)FOTO[k]=j.thumbnail.source}catch(e){}}));
+  try{localStorage.setItem('fotosWiki',JSON.stringify(FOTO))}catch(e){}pintarFotos()}
+function kml(){const p=S.terreno,n=(S.nombre+' '+S.apellido).replace(/[<&]/g,''),c=[...p,p[0]].map(([a,b])=>b+','+a+',0').join(' ');
+  return `<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2"><Placemark><name>${n} - field</name><Polygon><outerBoundaryIs><LinearRing><coordinates>${c}</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark></kml>`}
+function bajar(n,t,m){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:m}));a.download=n;a.click()}
+let pausado=false,map=null,verTodos=false;
+const vacio=()=>({paso:1,max:1,nombre:'',apellido:'',ubicacion:null,terreno:[],suelo:null,agua:null,tienePlantas:null,plantas:[],interes:[],clima:null});
+let S=(()=>{try{return{...vacio(),...JSON.parse(localStorage.getItem(KEY))}}catch(e){return vacio()}})();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){alert('There is not enough space to save more photos on this device.')}}
+function ir(n){S.paso=n;S.max=Math.max(S.max,n);save();render()}
+function area(p){if(p.length<3)return 0;const R=6378137,l0=p.reduce((a,b)=>a+b[0],0)/p.length*Math.PI/180;
+  const q=p.map(([la,ln])=>[ln*Math.PI/180*R*Math.cos(l0),la*Math.PI/180*R]);let s=0;
+  for(let i=0;i<q.length;i++){const[a,b]=q[i],[c,d]=q[(i+1)%q.length];s+=a*d-c*b}return Math.abs(s)/20000}
+const centro=()=>S.terreno.length?[S.terreno.reduce((a,p)=>a+p[0],0)/S.terreno.length,S.terreno.reduce((a,p)=>a+p[1],0)/S.terreno.length]:S.ubicacion?[S.ubicacion.lat,S.ubicacion.lng]:null;
+const coord=()=>{const c=centro();return c?c[0].toFixed(5)+', '+c[1].toFixed(5):'Not marked'};
+const ha=()=>{const h=area(S.terreno);return h?h.toFixed(2)+' ha':'—'};
+function svgTerreno(){const p=S.terreno;if(p.length<3)return'';
+  const la=p.map(x=>x[0]),ln=p.map(x=>x[1]),a=Math.min(...la),n=Math.min(...ln),s=Math.max(Math.max(...la)-a,Math.max(...ln)-n)||1;
+  return `<svg viewBox="0 0 200 200" style="width:100%;max-height:200px;background:#f2e4c9;border-radius:16px"><polygon points="${p.map(([x,y])=>`${10+(y-n)/s*180},${190-(x-a)/s*180}`).join(' ')}" fill="#e9b44c88" stroke="#c8581f" stroke-width="3"/></svg>`}
+function estacion(){const m=new Date().getMonth()+1,s=S.ubicacion&&S.ubicacion.lat>0?(m+6-1)%12+1:m;
+  return s>=9&&s<=11?'spring 🌸':s===12||s<=2?'summer ☀️':s<=5?'autumn 🍂':'winter ❄️'}
+async function clima(){const u=S.ubicacion;if(!u)return null;const k=u.lat.toFixed(2)+','+u.lng.toFixed(2);
+  if(S.clima&&S.clima.k===k)return S.clima;
+  const f=d=>d.toISOString().slice(0,10),fin=new Date(Date.now()-7*864e5),ini=new Date(fin-365*864e5);
+  try{const r=await(await fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=${u.lat}&longitude=${u.lng}&start_date=${f(ini)}&end_date=${f(fin)}&daily=temperature_2m_mean,precipitation_sum&timezone=auto`)).json();
+    const T=r.daily.temperature_2m_mean.filter(x=>x!=null),P=r.daily.precipitation_sum.map(x=>x||0);
+    S.clima={k,t:T.reduce((a,b)=>a+b,0)/T.length,r:P.reduce((a,b)=>a+b,0)*365/P.length};save();return S.clima}catch(e){return null}}
+function puntuar(c){const[,,,,,t0,t1,r,ms,su]=c,cl=S.clima,hem=S.ubicacion&&S.ubicacion.lat>0?6:0,mes=new Date().getMonth()+1;
+  const meses=ms.map(m=>(m-1+hem)%12+1);let p=0;const mot=[];
+  if(cl){const t=cl.t,fr=t<t0?'cold':'hot';
+    if(t>=t0&&t<=t1){p+=35;mot.push(['✅',`Your area averages about ${t.toFixed(0)}°C and this plant likes ${t0} to ${t1}°C.`])}
+    else if(t>=t0-3&&t<=t1+3){p+=15;mot.push(['⚠️',`Your area (${t.toFixed(0)}°C) is a little ${fr} for this plant.`])}
+    else mot.push(['❌',`Your area (${t.toFixed(0)}°C) is too ${fr} for this plant.`]);
+    if(cl.r>=r){p+=25;mot.push(['🌧️',`It rains about ${Math.round(cl.r)} mm a year and this plant needs ${r} mm.`])}
+    else if(S.agua==='riego'){p+=20;mot.push(['💧',`It rains little (${Math.round(cl.r)} mm a year), but you have water for irrigation.`])}
+    else mot.push(['❌',`It rains little (${Math.round(cl.r)} mm a year) and it needs ${r} mm. You would need to irrigate.`])}
+  if(meses.includes(mes)){p+=25;mot.push(['📅',`Now (${MES[mes]}) is a good time to plant it.`])}
+  else if(meses.includes(mes%12+1)){p+=12;mot.push(['📅','Planting season starts next month.'])}
+  else mot.push(['📅',`Plant it in ${meses.map(m=>MES[m]).join(', ')}. It is not the season yet.`]);
+  if(!S.suelo||S.suelo==='nose')p+=8;
+  else if(su.includes(S.suelo)){p+=15;mot.push(['🌱',`Your soil type (${SUELOS.find(x=>x[0]===S.suelo)[1].toLowerCase()}) suits it well.`])}
+  else mot.push(['⚠️','Your soil type is not ideal for this plant.']);
+  return{c,pct:Math.round(p/(cl?100:48)*100),mot}}
+
+function render(){
+  if(window.speechSynthesis)speechSynthesis.cancel();pausado=false;if($('pau'))$('pau').textContent='⏸ Pause';
+  if(map){map.remove();map=null}
+  main.className=S.paso===2?'wide':'';
+  $('steps').innerHTML=STEPS.map((s,i)=>`<button data-i="${i+1}" class="${S.paso===i+1?'now':i+1<=S.max?'done':''}" ${i+1>S.max&&S.paso<7?'disabled':''}><span>${s[0]}</span>${s[1]}</button>`).join('');
+  $('steps').querySelectorAll('button').forEach(b=>b.onclick=()=>ir(+b.dataset.i));
+  [null,p1,p2,p3,p4,p5,p6,p7][S.paso]();scrollTo(0,0)}
+
+/* 1. Datos */
+function p1(){
+  app.innerHTML=`<div class="card"><h1>Welcome! 👋</h1><p>Let us get to know your land step by step. First, tell us who you are.</p>
+  <label class="l" for="n">First name</label><input type="text" id="n" value="${S.nombre}" autocomplete="given-name">
+  <label class="l" for="a">Last name</label><input type="text" id="a" value="${S.apellido}" autocomplete="family-name">
+  <div class="row"><button class="b big" id="sig">Next ➜</button></div></div>`;
+  $('sig').onclick=()=>{S.nombre=$('n').value.trim();S.apellido=$('a').value.trim();
+    if(!S.nombre||!S.apellido)return alert('Please enter your first and last name');ir(2)}}
+
+/* 2. Mapa */
+function p2(){
+  let modo='marcar';
+  app.innerHTML=`<h1>🗺️ Mark your land</h1><p>Find your place and tap each corner of your land.</p>
+  <div class="mapwrap"><div id="map"></div>
+   <div class="ov s"><input type="text" id="q" placeholder="Type your town or address"><button class="b" id="bus">🔍 Search</button><button class="b" id="gps">📍 My location</button></div>
+   <div class="ov z"><button class="b" id="zi" aria-label="Zoom in">＋</button><button class="b" id="zo" aria-label="Zoom out">－</button></div>
+   <div class="ov m"><button class="b" id="mMov">✋ Move map</button><button class="b on" id="mMar">📍 Mark corners</button><button class="b" id="cap">🗺️ View streets</button></div></div>
+  <div class="hint" id="hint"></div><div class="msg" id="msg"></div>
+  <div class="stats"><div class="st"><small>📐 Area</small><div id="sHa"></div></div><div class="st"><small>📍 Coordinates</small><div id="sCo" style="font-size:19px"></div></div><div class="st"><small>✏️ Corners marked</small><div id="sPu"></div></div></div>
+  <div class="row"><button class="b pri" id="ge">🌍 Open in Google Earth</button><label class="b alt" style="cursor:pointer">📂 Import KML from Google Earth<input type="file" id="kml" accept=".kml,application/vnd.google-earth.kml+xml,text/xml" hidden></label></div>
+  <div class="row"><button class="b alt" id="und">↩ Undo point</button><button class="b warn" id="clr">🗑 Clear all</button></div>
+  <div class="row"><button class="b alt" id="atr">⬅ Back</button><button class="b big" id="sig">✔ Confirm my land</button></div>`;
+  const u=S.ubicacion;map=L.map('map',{zoomControl:false}).setView(u?[u.lat,u.lng]:[-34,-64],u?17:5);
+  const CAPAS=[L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Imagery © Esri'}),
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'})];
+  let capa=0,err=0;CAPAS.forEach((l,i)=>l.on('tileerror',()=>{if(i===capa&&++err===4)$('msg').textContent='⚠️ The map is not loading. Check your internet or tap "View streets".'}));
+  CAPAS[0].addTo(map);setTimeout(()=>map.invalidateSize(),300);
+  $('cap').onclick=()=>{map.removeLayer(CAPAS[capa]);capa=1-capa;err=0;CAPAS[capa].addTo(map);$('msg').textContent='';$('cap').textContent=capa?'🛰️ View satellite':'🗺️ View streets'};
+  const g=L.layerGroup().addTo(map);let poly;
+  const info=()=>{const n=S.terreno.length;$('sHa').textContent=ha();$('sCo').textContent=coord();$('sPu').textContent=n;$('sig').disabled=n<3;
+    $('hint').textContent=!S.ubicacion&&!n?'1️⃣ Type your town and tap Search, or tap "My location".':n<3?`2️⃣ Tap each corner of your land (you have ${n}, you need 3 or more).`:'3️⃣ Great! If the drawing matches your land, tap "Confirm". You can drag the points to fix them.'};
+  function dibujar(){g.clearLayers();const p=S.terreno;
+    poly=(p.length>=3?L.polygon(p):L.polyline(p)).setStyle({color:'#f5c542',weight:4,fillColor:'#e9b44c',fillOpacity:.35}).addTo(g);
+    p.forEach((pt,i)=>{const m=L.marker(pt,{draggable:true,icon:L.divIcon({className:'',html:'<div class="dot"></div>',iconSize:[24,24],iconAnchor:[12,12]})}).addTo(g);
+      m.on('drag',e=>{const{lat,lng}=e.target.getLatLng();S.terreno[i]=[lat,lng];poly.setLatLngs(S.terreno);info()});m.on('dragend',save)});info();save()}
+  const irA=(la,ln)=>{S.ubicacion={lat:la,lng:ln};save();map.setView([la,ln],17);$('msg').textContent='';info()};
+  map.on('click',e=>{if(modo==='marcar'){S.terreno.push([e.latlng.lat,e.latlng.lng]);dibujar()}});
+  const setModo=m=>{modo=m;$('mMar').classList.toggle('on',m==='marcar');$('mMov').classList.toggle('on',m==='mover')};
+  $('mMov').onclick=()=>setModo('mover');$('mMar').onclick=()=>setModo('marcar');
+  $('zi').onclick=()=>map.zoomIn();$('zo').onclick=()=>map.zoomOut();
+  $('gps').onclick=()=>{const m=$('msg');
+    if(!navigator.geolocation){m.textContent='This browser does not allow GPS. Type your town above.';return}
+    if(!window.isSecureContext){m.textContent='⚠️ The browser blocks GPS because the page was opened as a file. Open it with localhost or https, or type your town.';return}
+    m.textContent='Finding your location… this may take a few seconds.';
+    navigator.geolocation.getCurrentPosition(p=>irA(p.coords.latitude,p.coords.longitude),e=>{
+      m.textContent=e.code===1?'🔒 Permission needed. Tap the lock next to the address and allow "Location".':e.code===3?'It took too long. Turn on the GPS on your phone and try again.':'We could not find where you are. Type your town above.'},
+      {timeout:20000,maximumAge:60000})};
+  $('bus').onclick=async()=>{const q=$('q').value.trim();if(!q)return;$('msg').textContent='Searching…';
+    try{const r=await(await fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(q))).json();
+      r[0]?irA(+r[0].lat,+r[0].lon):$('msg').textContent='We could not find that place. Try another name.'}catch(e){$('msg').textContent='No connection. Check your internet.'}};
+  $('q').onkeydown=e=>{if(e.key==='Enter')$('bus').click()};
+  $('und').onclick=()=>{S.terreno.pop();dibujar()};
+  $('clr').onclick=()=>{if(S.terreno.length&&confirm('Clear all points?')){S.terreno=[];dibujar()}};
+  $('atr').onclick=()=>ir(1);
+  $('sig').onclick=()=>{const c=centro();S.ubicacion={lat:c[0],lng:c[1]};S.clima=null;ir(3)};
+  $('ge').onclick=()=>{const c=centro();if(!c)return alert('First find your place on the map');window.open(`https://earth.google.com/web/@${c[0]},${c[1]},0a,900d,35y,0h,0t,0r`,'_blank')};
+  $('kml').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+    try{const d=new DOMParser().parseFromString(await f.text(),'text/xml'),t=[...d.getElementsByTagName('coordinates')].map(x=>x.textContent.trim()).find(x=>x);
+      let q=t.split(/\s+/).map(x=>x.split(',').map(Number)).filter(a=>a.length>=2&&!isNaN(a[0])&&!isNaN(a[1])).map(a=>[a[1],a[0]]);
+      if(q.length>3&&q[0][0]===q[q.length-1][0]&&q[0][1]===q[q.length-1][1])q.pop();
+      if(q.length<3)throw 0;S.terreno=q;S.ubicacion={lat:q[0][0],lng:q[0][1]};dibujar();map.fitBounds(L.latLngBounds(q),{padding:[40,40]});$('msg').textContent='✅ Land imported from Google Earth'}
+    catch(x){$('msg').textContent='We could not read that file. In Google Earth, save your polygon as KML (not KMZ).'}e.target.value=''};
+  dibujar();if(S.terreno.length>=3)map.fitBounds(L.latLngBounds(S.terreno),{padding:[40,40]})}
+
+/* 3. Terreno */
+function p3(){
+  app.innerHTML=`<div class="card"><h1>🌍 Your land</h1><p>Tell us what it is like. Tap the option that fits best.</p>
+  <h2>What is your soil like?</h2><div class="g3">${SUELOS.map(s=>`<button class="opt ${S.suelo===s[0]?'on':''}" data-s="${s[0]}">${s[0]==='nose'?`<span>${s[2]}</span>`:foto('s_'+s[0],s[2])}${s[1]}<small>${s[3]}</small></button>`).join('')}</div>
+  <h2 style="margin-top:22px">Do you have water for irrigation?</h2><div class="g2">
+  <button class="opt ${S.agua==='riego'?'on':''}" data-a="riego"><span>💧</span>Yes, I have water<small>Well, canal, river or tank</small></button>
+  <button class="opt ${S.agua==='lluvia'?'on':''}" data-a="lluvia"><span>🌧️</span>No, rain only<small>I depend on rainfall</small></button></div>
+  <div class="row"><button class="b alt" id="atr">⬅ Back</button><button class="b big" id="sig" ${S.suelo&&S.agua?'':'disabled'}>Next ➜</button></div></div>`;
+  app.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{S.suelo=b.dataset.s;save();render()});
+  app.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{S.agua=b.dataset.a;save();render()});
+  $('atr').onclick=()=>ir(2);$('sig').onclick=()=>ir(4)}
+
+/* 4. Mis plantas */
+function comprimir(f){return new Promise(res=>{const im=new Image(),r=new FileReader();
+  r.onload=()=>{im.onload=()=>{const k=Math.min(1,640/Math.max(im.width,im.height)),cv=document.createElement('canvas');
+    cv.width=im.width*k;cv.height=im.height*k;cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);res(cv.toDataURL('image/jpeg',.7))};im.src=r.result};r.readAsDataURL(f)})}
+function p4(){
+  const sel=id=>S.plantas.find(x=>x.id===id);
+  let h=`<div class="card"><h1>🌿 Do you already have plants?</h1><p>Choose an option.</p>
+  <div class="g2"><button class="opt ${S.tienePlantas===true?'on':''}" id="si" style="min-height:90px"><span>✅</span>Yes, I do</button><button class="opt ${S.tienePlantas===false?'on':''}" id="no" style="min-height:90px"><span>❌</span>No, not yet</button></div>`;
+  if(S.tienePlantas){
+    h+=`<h2 style="margin-top:20px">Tap the ones you have:</h2><div class="g3">${PL.map(([id,n,e])=>`<button class="opt ${sel(id)?'on':''}" data-id="${id}">${id==='otra'?`<span>${e}</span>`:foto(id,e)}${n}</button>`).join('')}</div>`;
+    if(S.plantas.length)h+=`<h2 style="margin-top:20px">Take a photo of each 📷</h2>`;
+    h+=S.plantas.map((p,i)=>{const e=PL.find(x=>x[0]===p.id)[2];
+      return `<div class="sel">${p.foto?`<img src="${p.foto}" alt="">`:`<div class="e">${e}</div>`}
+      <div class="t">${p.id==='otra'?`<input type="text" data-i="${i}" placeholder="What plant is it?" value="${p.nombre==='Other'?'':p.nombre}">`:p.nombre}</div>
+      <label class="ph">📷 ${p.foto?'Change photo':'Take photo'}<input type="file" accept="image/*" capture="environment" hidden data-f="${i}"></label></div>`}).join('')}
+  h+=`<div class="row"><button class="b alt" id="atr">⬅ Back</button><button class="b big" id="sig" ${S.tienePlantas===null?'disabled':''}>Next ➜</button></div></div>`;
+  app.innerHTML=h;
+  $('si').onclick=()=>{S.tienePlantas=true;save();render()};
+  $('no').onclick=()=>{S.tienePlantas=false;S.plantas=[];save();render()};
+  app.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>{const id=b.dataset.id;
+    S.plantas=sel(id)?S.plantas.filter(p=>p.id!==id):[...S.plantas,{id,nombre:PL.find(p=>p[0]===id)[1],foto:null}];save();render()});
+  app.querySelectorAll('[data-i]').forEach(i=>i.oninput=()=>{S.plantas[i.dataset.i].nombre=i.value||'Other';save()});
+  app.querySelectorAll('[data-f]').forEach(i=>i.onchange=async()=>{if(!i.files[0])return;S.plantas[i.dataset.f].foto=await comprimir(i.files[0]);save();render()});
+  $('atr').onclick=()=>ir(3);$('sig').onclick=()=>ir(5)}
+
+/* 5. Sugerencias */
+async function p5(){
+  app.innerHTML=`<div class="card"><h1>💡 What should you plant?</h1><p>We are checking the weather in your area… ⏳</p></div>`;
+  const cl=await clima();if(S.paso!==5)return;
+  const lista=CROPS.map(puntuar).sort((a,b)=>b.pct-a.pct),ver=verTodos?lista:lista.slice(0,5);
+  app.innerHTML=`<h1>💡 What should you plant?</h1><p>Based on your area, the time of year and your land. The percentages show how well each plant fits.</p>
+  <div class="clima"><div>📅 ${MES[new Date().getMonth()+1]}<br>${estacion()}</div>${cl?`<div>🌡️ ${cl.t.toFixed(0)}°C<br>yearly average</div><div>🌧️ ${Math.round(cl.r)} mm<br>of rain a year</div>`:`<div style="flex:3">⚠️ We could not check the weather (no internet?). We only used the season and the soil.</div>`}
+  <div>🌍 ${S.suelo?SUELOS.find(s=>s[0]===S.suelo)[1]:''}<br>${S.agua==='riego'?'with irrigation':'rain only'}</div></div>
+  ${ver.map(({c,pct,mot})=>`<div class="rec"><div class="im" style="background:${c[3]}">${foto(c[0],c[2])}</div><div class="tx">
+   <h2>${c[1]}<span class="pct ${pct<50?'low':pct<75?'mid':''}">${pct}%</span></h2><p style="margin:0">${c[4]}</p>
+   <ul>${mot.map(m=>`<li>${m[0]} ${m[1]}</li>`).join('')}</ul>
+   <button class="b ${S.interes.includes(c[0])?'big':'alt'}" data-i="${c[0]}">${S.interes.includes(c[0])?'⭐ Interested (tap to remove)':'☆ Interested'}</button></div></div>`).join('')}
+  <button class="b alt" id="mas" style="width:100%">${verTodos?'Show less ▲':'Show all plants ▼'}</button>
+  <div class="row"><button class="b alt" id="atr">⬅ Back</button><button class="b big" id="sig">View summary ➜</button></div>`;
+  app.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const i=b.dataset.i;S.interes=S.interes.includes(i)?S.interes.filter(x=>x!==i):[...S.interes,i];save();const y=scrollY;render();scrollTo(0,y)});
+  $('mas').onclick=()=>{verTodos=!verTodos;render()};$('atr').onclick=()=>ir(4);$('sig').onclick=()=>ir(6)}
+
+/* 6. Resumen */
+function p6(){
+  const suelo=S.suelo&&SUELOS.find(s=>s[0]===S.suelo),ed=n=>`<button class="b alt" data-e="${n}">✏️ Edit</button>`;
+  app.innerHTML=`<h1>✅ Review your information</h1><p>If something is wrong, tap <b>Edit</b>. You will not lose anything you entered.</p>
+  <div class="card"><div class="res"><h2>👤 ${S.nombre} ${S.apellido}</h2>${ed(1)}</div></div>
+  <div class="card"><div class="res"><h2>🗺️ Your land</h2>${ed(2)}</div>
+   <div class="stats" style="margin-bottom:12px"><div class="st"><small>📐 Area</small><div>${ha()}</div></div><div class="st"><small>📍 Coordinates</small><div style="font-size:19px">${coord()}</div></div></div>${svgTerreno()}</div>
+  <div class="card"><div class="res"><h2>🌍 Soil and water</h2>${ed(3)}</div><b>${suelo?suelo[2]+' '+suelo[1]:'—'}</b> · <b>${S.agua==='riego'?'💧 With water for irrigation':'🌧️ Rain only'}</b></div>
+  <div class="card"><div class="res"><h2>🌿 Plants you have</h2>${ed(4)}</div>${S.plantas.length?S.plantas.map(x=>`<div><b>${x.nombre}</b><br>${x.foto?`<img src="${x.foto}" alt="${x.nombre}">`:''}</div>`).join(''):'None for now'}</div>
+  <div class="card"><div class="res"><h2>⭐ Plants you are interested in</h2>${ed(5)}</div>${S.interes.length?S.interes.map(i=>C[i][2]+' '+C[i][1]).join(' · '):'None selected'}</div>
+  <div class="row"><button class="b alt" id="atr">⬅ Back</button><button class="b big" id="fin">✔ Everything is correct, finish</button></div>`;
+  app.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>ir(+b.dataset.e));
+  $('atr').onclick=()=>ir(5);$('fin').onclick=()=>ir(7)}
+
+/* 7. Final */
+function p7(){
+  app.innerHTML=`<div class="card" style="text-align:center"><div style="font-size:70px">🎉</div><h1>Thank you, ${S.nombre}!</h1>
+  <p>We saved your land of <b>${ha()}</b> and your plants.</p>${svgTerreno()}
+  <div class="row"><button class="b pri" id="ke">🌍 View my land in Google Earth (KML)</button></div>
+  <div class="row"><button class="b alt" id="ed">✏️ Edit again</button><button class="b warn" id="rst">Start over</button></div></div>`;
+  $('ke').onclick=()=>bajar('my-field.kml',kml(),'application/vnd.google-earth.kml+xml');
+  $('ed').onclick=()=>ir(6);$('rst').onclick=()=>{if(confirm('Delete everything and start over?')){S=vacio();save();render()}}}
+
+const VELS=[['🐢 Slow',.7],['🐌 Very slow',.5],['🐇 Normal',.95]];let vi=0;
+$('voz').onclick=()=>{if(!window.speechSynthesis)return alert('Your browser cannot read aloud');speechSynthesis.cancel();pausado=false;$('pau').textContent='⏸ Pause';
+  const t=app.innerText.replace(/\p{Extended_Pictographic}|\uFE0F/gu,'').replace(/\s*\n\s*/g,'. '),u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=VELS[vi][1];speechSynthesis.speak(u)};
+$('pau').onclick=()=>{if(!window.speechSynthesis||(!speechSynthesis.speaking&&!pausado))return;
+  if(pausado){speechSynthesis.resume();pausado=false;$('pau').textContent='⏸ Pause'}else{speechSynthesis.pause();pausado=true;$('pau').textContent='▶ Resume'}};
+$('vel').onclick=()=>{vi=(vi+1)%VELS.length;$('vel').textContent=VELS[vi][0]};
+const mP=$('mProto'),dV=$('demoV'),dF=$('demoF'),stopV=()=>{if(window.speechSynthesis)speechSynthesis.cancel()};
+const closeP=()=>{mP.hidden=true},closeD=()=>{dV.hidden=true;document.body.style.overflow=''};
+$('bProto').onclick=()=>{stopV();mP.hidden=false;$('cProto').focus()};
+$('cProto').onclick=closeP;mP.onclick=e=>{if(e.target===mP)closeP()};
+$('bDemo').onclick=()=>{stopV();if(!dF.getAttribute('src'))dF.src='demo/index.html';dV.hidden=false;document.body.style.overflow='hidden';$('cDemo').focus()};
+$('cDemo').onclick=closeD;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeP();closeD()}});
+render();cargarFotos();
+</script>
+</body>
+</html>
